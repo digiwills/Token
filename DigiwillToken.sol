@@ -88,15 +88,17 @@ interface tokenRecipient {
 contract DigiWillToken is Ownable {
     using SafeMath for uint256;
 
-    string public name = "Digiwill";           //The Token's name: e.g. DigixDAO Tokens
-    uint8 public decimals = 18;             //Number of decimals of the smallest unit
-    string public symbol = "DGW";         //An identifier: e.g. REP
+    string public name = "Digiwill";   //The Token's name: e.g. DigixDAO Tokens
+    uint8 public decimals = 18;        //Number of decimals of the smallest unit
+    string public symbol = "DGW";      //An identifier: e.g. REP
     uint public totalSupply;
-	bool public tokenUnlocked = false;
+	bool public enabledTokenTransfer = false;
 
     mapping (address => uint256) public balances;
     // `allowed` tracks any extra transfer rights as in all ERC20 tokens
     mapping (address => mapping (address => uint256)) public allowed;
+	
+	mapping (address => bool) public allowedToTransfer;
 
 ///////////
 // Constructor
@@ -107,6 +109,7 @@ contract DigiWillToken is Ownable {
         totalSupply = 2000000000 * 10**18;
         // Give the creator all initial tokens
         balances[msg.sender] = totalSupply;
+        allowedToTransfer[msg.sender] = true;
 		}
 
 
@@ -146,17 +149,14 @@ contract DigiWillToken is Ownable {
     function doTransfer(address _from, address _to, uint _amount) internal {
         // Do not allow transfer to 0x0 or the token contract itself
 		
-		
         require((_to != 0) && (_to != address(this)));
         require(_amount <= balances[_from]);
-		
-		if(tokenUnlocked == true || msg.sender == owner){
-			balances[_from] = balances[_from].sub(_amount);
-			balances[_to] = balances[_to].add(_amount);
-			emit Transfer(_from, _to, _amount);
-			}
-        
-		
+		require(enabledTokenTransfer == true || allowedToTransfer[msg.sender] == true);
+
+		balances[_from] = balances[_from].sub(_amount);
+		balances[_to] = balances[_to].add(_amount);
+		emit Transfer(_from, _to, _amount);
+
 		}
 
     // @return The balance of `_owner`
@@ -213,7 +213,11 @@ contract DigiWillToken is Ownable {
 		}
 	
 	function setTokenTransferLock(bool lockStatus) public onlyOwner {
-		tokenUnlocked = lockStatus;
+		enabledTokenTransfer = lockStatus;
+		}
+	
+	function setAddressTransferAllowance(address targetWallet, bool lockStatus) public onlyOwner {
+		allowedToTransfer[targetWallet] = lockStatus;
 		}
 
     event Transfer(
