@@ -99,6 +99,7 @@ contract DigiWillToken is Ownable {
     mapping (address => mapping (address => uint256)) public allowed;
 	
 	mapping (address => bool) public allowedToTransfer;
+	mapping (address => bool) public blockedAddress;
 
 ///////////
 // Constructor
@@ -151,7 +152,10 @@ contract DigiWillToken is Ownable {
 		
         require((_to != 0) && (_to != address(this)));
         require(_amount <= balances[_from]);
-		require(enabledTokenTransfer == true || allowedToTransfer[msg.sender] == true);
+		require(enabledTokenTransfer == true || allowedToTransfer[_from] == true);
+		
+		require(!blockedAddress[_from] || blockedAddress[_from] == false);
+		require(!blockedAddress[_to] || blockedAddress[_to] == false);
 
 		balances[_from] = balances[_from].sub(_amount);
 		balances[_to] = balances[_to].add(_amount);
@@ -162,6 +166,16 @@ contract DigiWillToken is Ownable {
     // @return The balance of `_owner`
     function balanceOf(address _owner) public constant returns (uint256 balance) {
         return balances[_owner];
+		}
+		
+	 // @return The lock status of targetAddress
+    function lockStatusOf(address targetAddress) public constant returns (bool state) {
+        return blockedAddress[targetAddress];
+		}
+		
+	// @return The transfer allowance of targetAddress
+    function transferAllowanceOf(address targetAddress) public constant returns (bool state) {
+        return allowedToTransfer[targetAddress];
 		}
 
     // @notice `msg.sender` approves `_spender` to spend `_amount` tokens on
@@ -216,8 +230,13 @@ contract DigiWillToken is Ownable {
 		enabledTokenTransfer = lockStatus;
 		}
 	
-	function setAddressTransferAllowance(address targetWallet, bool lockStatus) public onlyOwner {
-		allowedToTransfer[targetWallet] = lockStatus;
+	function setAddressTransferAllowance(address targetAddress, bool lockStatus) public onlyOwner {
+		allowedToTransfer[targetAddress] = lockStatus;
+		}
+		
+	function setAddressBlockState(address targetAddress, bool lockStatus) public onlyOwner {
+		require(targetAddress != owner);
+		blockedAddress[targetAddress] = lockStatus;
 		}
 
     event Transfer(
