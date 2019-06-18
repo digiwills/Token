@@ -1,4 +1,4 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.4.24;
 
 
 contract Ownable {
@@ -80,22 +80,20 @@ library SafeMath {
 	}
 }
 
-
 interface tokenRecipient {
     function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) external;
 	}
 
-contract DigiWillToken is Ownable {
+contract DigiWill is Ownable {
     using SafeMath for uint256;
 
-    string public name = "Digiwill";   //The Token's name: e.g. DigixDAO Tokens
-    uint8 public decimals = 18;        //Number of decimals of the smallest unit
-    string public symbol = "DGW";      //An identifier: e.g. REP
+    string public name = "Digiwill";
+    uint8 public decimals = 18;
+    string public symbol = "DGW";
     uint public totalSupply;
 	bool public enabledTokenTransfer = false;
 
     mapping (address => uint256) public balances;
-    // `allowed` tracks any extra transfer rights as in all ERC20 tokens
     mapping (address => mapping (address => uint256)) public allowed;
 	
 	mapping (address => bool) public allowedToTransfer;
@@ -108,7 +106,6 @@ contract DigiWillToken is Ownable {
     // @notice Constructor to create a DigiWillToken
        constructor() public {
         totalSupply = 2000000000 * 10**18;
-        // Give the creator all initial tokens
         balances[msg.sender] = totalSupply;
         allowedToTransfer[msg.sender] = true;
 		}
@@ -160,7 +157,6 @@ contract DigiWillToken is Ownable {
 		balances[_from] = balances[_from].sub(_amount);
 		balances[_to] = balances[_to].add(_amount);
 		emit Transfer(_from, _to, _amount);
-
 		}
 
     // @return The balance of `_owner`
@@ -226,14 +222,17 @@ contract DigiWillToken is Ownable {
         return totalSupply;
 		}
 	
+	// @dev This function set the lock status
 	function setTokenTransferLock(bool lockStatus) public onlyOwner {
 		enabledTokenTransfer = lockStatus;
 		}
-	
+		
+	// @dev This function set an address to allow transfer tokens
 	function setAddressTransferAllowance(address targetAddress, bool lockStatus) public onlyOwner {
 		allowedToTransfer[targetAddress] = lockStatus;
 		}
-		
+	
+	// @dev This function block an address to receive and send tokens	
 	function setAddressBlockState(address targetAddress, bool lockStatus) public onlyOwner {
 		require(targetAddress != owner);
 		blockedAddress[targetAddress] = lockStatus;
@@ -255,5 +254,4 @@ contract DigiWillToken is Ownable {
         address indexed _burner,
         uint256 _amount
         );
-    
 }
