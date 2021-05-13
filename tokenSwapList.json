@@ -20,19 +20,32 @@
         "description": "Tokens used for some services"
       }
   },
-  "timestamp": "2021-04-12T00:00:00+00:00",
+  "timestamp": "2021-05-12T00:00:00+00:00",
   "tokens": [
     {
       "chainId": 1,
       "address": "0x87b87a7583d8d8f15b58bdd290318386ac8ee174",
       "symbol": "DGW",
       "name": "Digiwill",
-      "decimals": 8,
+      "decimals": 18,
+      "logoURI": "https://etherscan.io/token/images/digiwill_32.png",
+      "tags": [
+        "utility"
+      ]
+    },
+    
+    {
+      "chainId": 137,
+      "address": "0xf032E6a441332c7FFa23903D6F3ECAed978c71b3",
+      "symbol": "DGW",
+      "name": "Digiwill",
+      "decimals": 18,
       "logoURI": "https://etherscan.io/token/images/digiwill_32.png",
       "tags": [
         "utility"
       ]
     }
+    
   ],
   "version": {
     "major": 1,
