@@ -1,6 +1,6 @@
 {
   "name": "Digiwills Token List",
-  "logoURI": "ipfs://QmUSNbwUxUYNMvMksKypkgWs8unSm8dX2GjCPBVGZ7GGMr",
+  "logoURI": "https://etherscan.io/token/images/digiwill_32.png",
   "keywords": [
     "audited",
     "verified",
@@ -28,7 +28,7 @@
       "symbol": "DGW",
       "name": "Digiwill",
       "decimals": 8,
-      "logoURI": "ipfs://QmUSNbwUxUYNMvMksKypkgWs8unSm8dX2GjCPBVGZ7GGMr",
+      "logoURI": "https://etherscan.io/token/images/digiwill_32.png",
       "tags": [
         "utility"
       ]
